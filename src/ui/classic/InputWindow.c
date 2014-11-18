@@ -499,6 +499,17 @@ void InputWindowPaint(FcitxXlibWindow* window, cairo_t* c)
     int dpi = sc->skinFont.respectDPI? classicui->dpi : 0;
     FcitxCairoTextContextSet(ctc, window->owner->font, window->owner->fontSize > 0 ? window->owner->fontSize : sc->skinFont.fontSize, dpi);
 
+    int x, y;
+    char buf[10];
+    snprintf(buf, 10, "%d/%d",
+             FcitxCandidateWordGetCurrentPage(candList),
+             FcitxCandidateWordPageCount(candList));
+    x = window->contentWidth - FcitxCairoTextContextStringWidth(ctc, buf) +
+        window->background->marginRight - window->background->marginLeft;
+    y = FcitxCairoTextContextFontHeight(ctc) - window->background->marginTop;
+    FcitxCairoTextContextOutputString(
+        ctc, buf, x, y, &sc->skinFont.fontColor[0]);
+
     int i;
     for (i = 0; i < FcitxMessagesGetMessageCount(msgup) ; i++) {
         FcitxCairoTextContextOutputString(ctc, strUp[i], posUpX[i], posUpY[i], &sc->skinFont.fontColor[FcitxMessagesGetMessageType(msgup, i) % 7]);
